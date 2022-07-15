@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.cardview.widget.CardView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.koushikjoshi.lessonist.CustomAdapter
@@ -34,6 +35,7 @@ class LearnFragment : Fragment() {
     lateinit var cardViewTop: CardView
     lateinit var cardViewBottom: CardView
     lateinit var hoursText: TextView
+    lateinit var constraintLayout: ConstraintLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,6 +52,7 @@ class LearnFragment : Fragment() {
         coursesRecycler = view.findViewById(R.id.learnRecycler)
         cardViewBottom = view.findViewById(R.id.cardView2)
         progressBar = view.findViewById(R.id.progressBar)
+        constraintLayout = view.findViewById(R.id.parent_layout)
 
 
         coursesRecycler.visibility = View.GONE
@@ -63,12 +66,17 @@ class LearnFragment : Fragment() {
 //            addRecyclerViewElements(coursesRecycler)
             addTestElements(coursesRecycler)
             coursesRecycler.visibility = View.VISIBLE
+//            addRecyclerVIewScrollAnimation(coursesRecycler, constraintLayout)
         }else{
             progressBar.visibility = View.GONE
             cardViewBottom.visibility = View.VISIBLE
         }
 
+
+
     }
+
+
 
     private fun addTestElements(coursesRecycler: RecyclerView) {
 
