@@ -1,8 +1,13 @@
 package com.koushikjoshi.lessonist
 
+import android.content.ContentValues.TAG
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
+import android.view.View
 import android.widget.Button
+import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -27,6 +32,8 @@ class MainActivity : AppCompatActivity() {
     val Req_Code:Int=123
     lateinit var mGoogleSignInClient: GoogleSignInClient
     private lateinit var firebaseAuth: FirebaseAuth
+    lateinit var progessbar: ProgressBar
+    lateinit var blacKImage: ImageView
 
 
 
@@ -37,6 +44,11 @@ class MainActivity : AppCompatActivity() {
         FirebaseApp.initializeApp(this)
 
         auth = Firebase.auth
+
+        progessbar = findViewById(R.id.progressBar3)
+        progessbar.visibility = View.GONE
+        blacKImage = findViewById(R.id.blackImage)
+        blacKImage.visibility = View.GONE
 
 //        Configure Google Sign In
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -60,12 +72,18 @@ class MainActivity : AppCompatActivity() {
         }
 
 
+
 //        initialize widgets
         SignInbutton = findViewById(R.id.signIn)
 
 //        Open home activity when button pressed
         SignInbutton.setOnClickListener {
+
             Toast.makeText(this, "Logging In", Toast.LENGTH_SHORT).show()
+            progessbar.visibility = View.VISIBLE
+            blacKImage.visibility = View.VISIBLE
+            SignInbutton.isEnabled = false
+            SignInbutton.isClickable = false
             signInGoogle()
         }
 
@@ -114,14 +132,29 @@ class MainActivity : AppCompatActivity() {
 
         val db = Firebase.firestore
 
-        var docRef = db.collection("users").document(email.toString())
+        var existence: Boolean = false
 
-        if(docRef.get()!=null){
-            return true
+        var docRef = db.collection("users").document(email.toString())
+        docRef.get().addOnCompleteListener { task ->
+            if(task.isSuccessful){
+                val document = task.result
+                if(document!=null){
+                    if (document.exists()) {
+                        Log.d("TAG", "Document already exists.")
+                        existence = true
+
+                    } else {
+                        Log.d("TAG", "Document doesn't exist.")
+                        existence = false
+                    }
+                }
+                else {
+                    Log.d("TAG", "Error: ", task.exception)
+                }
+
+            }
         }
-        else{
-            return false
-        }
+        return existence
     }
 
     private fun UpdateUI(account: GoogleSignInAccount) {

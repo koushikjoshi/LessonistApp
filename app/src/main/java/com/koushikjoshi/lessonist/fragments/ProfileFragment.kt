@@ -8,6 +8,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
+import com.firebase.ui.auth.AuthUI
+import com.google.android.gms.auth.api.Auth
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.koushikjoshi.lessonist.HomeActivity
@@ -30,8 +34,10 @@ class ProfileFragment : Fragment() {
     private var param2: String? = null
 
     lateinit var logoutText: TextView
+    private lateinit var mGoogleSignInClient: GoogleSignInClient
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
         arguments?.let {
             param1 = it.getString(ARG_PARAM1)
@@ -45,6 +51,7 @@ class ProfileFragment : Fragment() {
 
         logoutText.setOnClickListener {
             Firebase.auth.signOut()
+            AuthUI.getInstance().signOut(view.context)
             Toast.makeText(view.context, "Logging Out", Toast.LENGTH_SHORT).show()
             val intent: Intent = Intent(view.context, MainActivity::class.java)
             startActivity(intent)
