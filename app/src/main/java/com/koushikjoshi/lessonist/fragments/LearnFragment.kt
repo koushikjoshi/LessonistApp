@@ -1,7 +1,6 @@
 package com.koushikjoshi.lessonist.fragments
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,11 +8,14 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.auth.FirebaseAuth
 import com.koushikjoshi.lessonist.CustomAdapter
 import com.koushikjoshi.lessonist.ItemsViewModel
 import com.koushikjoshi.lessonist.R
+
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -36,6 +38,7 @@ class LearnFragment : Fragment() {
     lateinit var cardViewBottom: CardView
     lateinit var hoursText: TextView
     lateinit var constraintLayout: ConstraintLayout
+    lateinit var nameText: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,8 +56,17 @@ class LearnFragment : Fragment() {
         cardViewBottom = view.findViewById(R.id.cardView2)
         progressBar = view.findViewById(R.id.progressBar)
         constraintLayout = view.findViewById(R.id.parent_layout)
+        nameText = view.findViewById(R.id.textView)
 
+        val user = FirebaseAuth.getInstance().currentUser
 
+        var name = user?.displayName
+        var i = name?.indexOf(' ')?.toInt()
+        var finalName = name?.substring(0, i!!)
+
+        val textFinal = "Welcome, "+finalName.toString().capitalize()
+
+        nameText.setText(textFinal.toString())
         coursesRecycler.visibility = View.GONE
         cardViewBottom.visibility = View.GONE
 

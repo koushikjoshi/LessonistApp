@@ -124,8 +124,26 @@ class MainActivity : AppCompatActivity() {
     private fun addUserToDatabase(account: GoogleSignInAccount) {
         val db = Firebase.firestore
 
+        val name = hashMapOf(
+            "name" to account.displayName.toString()
+        )
+        val details = hashMapOf(
+            "details" to name,
+            "courses_completed" to "",
+            "courses_enrolled" to ""
+        )
+//        val courses_completed = hashMapOf(
+//            "courses_completed" to ""
+//        )
+//        val courses_enrolled = hashMapOf(
+//            "courses_enrolled" to ""
+//        )
+//        val array = arrayListOf(details, courses_completed, courses_enrolled)
+//        val finalMap = hashMapOf(
+//            account.email.toString() to array
+//        )
 
-
+        db.collection("users").document(account.email.toString()).set(details)
     }
 
     private fun userExists(email: String?): Boolean {

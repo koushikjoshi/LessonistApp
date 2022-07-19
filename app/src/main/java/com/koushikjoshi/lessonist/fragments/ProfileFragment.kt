@@ -12,11 +12,13 @@ import com.firebase.ui.auth.AuthUI
 import com.google.android.gms.auth.api.Auth
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.koushikjoshi.lessonist.HomeActivity
 import com.koushikjoshi.lessonist.MainActivity
 import com.koushikjoshi.lessonist.R
+import org.w3c.dom.Text
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -35,6 +37,7 @@ class ProfileFragment : Fragment() {
 
     lateinit var logoutText: TextView
     private lateinit var mGoogleSignInClient: GoogleSignInClient
+    lateinit var nameText: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -48,6 +51,12 @@ class ProfileFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         logoutText = view.findViewById(R.id.logOutText)
+        nameText = view.findViewById(R.id.textView3)
+
+        val user = FirebaseAuth.getInstance().currentUser
+        var name = user?.displayName.toString()
+        var nameFinal = name.trim().split("\\s+".toRegex()).map { it.capitalize() }.joinToString(" ")
+        nameText.setText(nameFinal.toString())
 
         logoutText.setOnClickListener {
             Firebase.auth.signOut()
