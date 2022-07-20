@@ -1,6 +1,7 @@
 package com.koushikjoshi.lessonist.fragments
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,12 +10,15 @@ import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
-import com.koushikjoshi.lessonist.CustomAdapter
-import com.koushikjoshi.lessonist.ItemsViewModel
-import com.koushikjoshi.lessonist.R
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
+import com.koushikjoshi.lessonist.*
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 
 
 // TODO: Rename parameter arguments, choose names that match
@@ -72,19 +76,18 @@ class LearnFragment : Fragment() {
 
         coursesRecycler.layoutManager = LinearLayoutManager(this.context, LinearLayoutManager.HORIZONTAL, false)
 
-
+    viewLifecycleOwner.lifecycleScope.launch{
         if(userHasCourses()){
+            addRecyclerViewElements(coursesRecycler)
             progressBar.visibility = View.GONE
-//            addRecyclerViewElements(coursesRecycler)
-            addTestElements(coursesRecycler)
+//            addTestElements(coursesRecycler)
             coursesRecycler.visibility = View.VISIBLE
 //            addRecyclerVIewScrollAnimation(coursesRecycler, constraintLayout)
         }else{
             progressBar.visibility = View.GONE
             cardViewBottom.visibility = View.VISIBLE
         }
-
-
+    }
 
     }
 
@@ -92,25 +95,72 @@ class LearnFragment : Fragment() {
 
     private fun addTestElements(coursesRecycler: RecyclerView) {
 
-        val data = ArrayList<ItemsViewModel>()
-        data.add(ItemsViewModel(R.drawable.web_development_course, "Learn Web Development"))
-        data.add(ItemsViewModel(R.drawable.python_course, "Learn Python"))
-        data.add(ItemsViewModel(R.drawable.data_science_course, "Data Science"))
-        data.add(ItemsViewModel(R.drawable.creative_writing_course, "Creative Writing"))
-        data.add(ItemsViewModel(R.drawable.time_management_course, "Time Management"))
+        val data = ArrayList<ItemsViewModel2>()
+//        data.add(ItemsViewModel(R.drawable.web_development_course, "Learn Web Development"))
+//        data.add(ItemsViewModel(R.drawable.python_course, "Learn Python"))
+//        data.add(ItemsViewModel(R.drawable.data_science_course, "Data Science"))
+//        data.add(ItemsViewModel(R.drawable.creative_writing_course, "Creative Writing"))
+//        data.add(ItemsViewModel(R.drawable.time_management_course, "Time Management"))
 
-        val adapter = CustomAdapter(data)
+        val adapter = CustomAdapter2(data)
 //
         coursesRecycler.adapter = adapter
 
     }
 
     private fun addRecyclerViewElements(coursesRecycler: RecyclerView) {
-        TODO("Not yet implemented")
+        val db = Firebase.firestore
+        val data = ArrayList<ItemsViewModel2>()
+        var user = FirebaseAuth.getInstance().currentUser
+        var email = user?.email.toString()
+        db.collection("users")
+            .document(email)
+            .get()
+            .addOnSuccessListener { courses->
+
+               var map: Map<String, Map<String, String>> = courses.data?.get("courses_enrolled") as Map<String, Map<String, String>>
+                Log.d("TAG", "value of courses enrolled is ${courses.data?.get("courses_enrolled")}")
+
+                for ((key, value) in map) {
+                    println("$key")
+                    for((key2, value2) in value){
+                        println("$key2 = $value2")
+                        if(key2.toString()=="image"){
+                            data.add(ItemsViewModel2(value2.toString(), key.toString()))
+                        }
+                    }
+                }
+                val adapter = CustomAdapter2(data)
+//
+                coursesRecycler.adapter = adapter
+
+
+            }
+
     }
 
-    private fun userHasCourses(): Boolean {
-        return true
+    private suspend fun userHasCourses(): Boolean {
+        val db = Firebase.firestore
+        var existence: Boolean = false
+        val user = FirebaseAuth.getInstance().currentUser
+        var email = user?.email.toString()
+        db.collection("users")
+            .document(email)
+            .get()
+            .addOnSuccessListener { courses->
+
+                if(courses.data?.get("courses_enrolled")!=""){
+                    existence = true
+                }
+                else{
+                    existence = false
+                }
+//                existence = courses.data?.get("courses_enrolled").toString()!=""
+                Log.d("TAG", "value of courses is ${courses.data?.get("courses_enrolled")}")
+                Log.d("TAG", "EXISTENCE 1 VALUE is "+existence.toString())
+            }.await()
+        Log.d("TAG", "EXISTENCE 2 VALUE is "+existence.toString())
+        return existence
     }
 
     override fun onCreateView(
