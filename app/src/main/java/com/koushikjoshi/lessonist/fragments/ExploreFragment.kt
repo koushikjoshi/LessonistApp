@@ -31,7 +31,6 @@ private const val ARG_PARAM2 = "param2"
  */
 class ExploreFragment : Fragment() {
 
-
     lateinit var allCoursesRecycler: RecyclerView
     lateinit var progressBar2: ProgressBar
 
@@ -84,11 +83,8 @@ class ExploreFragment : Fragment() {
                     data.add(ItemsViewModel2(image.toString(), name.toString()))
                     Log.w(ContentValues.TAG, "Added "+i.toString()+" element")
 
-
                     progressBar2.visibility = View.GONE
                     allCoursesRecycler.visibility = View.VISIBLE
-
-
                 }
             }
 
@@ -109,10 +105,6 @@ class ExploreFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_explore, container, false)
-
-
-
-
     }
 
     companion object {

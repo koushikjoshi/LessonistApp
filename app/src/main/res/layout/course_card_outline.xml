@@ -29,7 +29,7 @@
                 android:layout_height="0dp"
                 android:layout_margin="5dp"
                 android:elevation="0dp"
-                app:cardCornerRadius="10dp"
+                app:cardCornerRadius="8dp"
                 app:cardElevation="0dp"
                 app:cardPreventCornerOverlap="false"
                 app:contentPadding="-2dp"

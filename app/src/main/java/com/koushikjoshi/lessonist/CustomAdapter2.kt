@@ -1,7 +1,5 @@
 package com.koushikjoshi.lessonist
 
-import android.icu.number.NumberFormatter.with
-import android.icu.number.NumberRangeFormatter.with
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,9 +8,18 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
 
+
+interface ClickListener {
+    fun onPositionClicked(position: Int)
+    fun onLongClicked(position: Int)
+}
+
+
 class CustomAdapter2(private val mList: List<ItemsViewModel2>) : RecyclerView.Adapter<CustomAdapter2.ViewHolder>() {
 
     // create new views
+
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CustomAdapter2.ViewHolder {
         // inflates the card_view_design view
         // that is used to hold list item

@@ -3,6 +3,7 @@ package com.koushikjoshi.lessonist
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.ContactsContract
+import android.widget.Button
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.koushikjoshi.lessonist.fragments.ExploreFragment
@@ -14,6 +15,7 @@ class HomeActivity : AppCompatActivity() {
     private val learnFragment = LearnFragment()
     private val exploreFragment = ExploreFragment()
     private val profileFragment = ProfileFragment()
+    lateinit var viewCourseButton: Button
 
 
     lateinit var bottomNavBar: BottomNavigationView
@@ -32,6 +34,8 @@ class HomeActivity : AppCompatActivity() {
             }
             true
         }
+
+
     }
 
     private fun replaceFragment(fragment: Fragment){

@@ -1,10 +1,14 @@
 package com.koushikjoshi.lessonist.fragments
 
+import android.content.ContentValues
+import android.content.ContentValues.TAG
 import android.os.Bundle
+import android.provider.Settings
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.cardview.widget.CardView
@@ -14,9 +18,16 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.ktx.database
+import com.google.firebase.database.ktx.getValue
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.koushikjoshi.lessonist.*
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
@@ -43,6 +54,7 @@ class LearnFragment : Fragment() {
     lateinit var hoursText: TextView
     lateinit var constraintLayout: ConstraintLayout
     lateinit var nameText: TextView
+    lateinit var coursesViewButton: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,6 +74,10 @@ class LearnFragment : Fragment() {
         constraintLayout = view.findViewById(R.id.parent_layout)
         nameText = view.findViewById(R.id.textView)
 
+
+
+
+
         val user = FirebaseAuth.getInstance().currentUser
 
         var name = user?.displayName
@@ -76,91 +92,87 @@ class LearnFragment : Fragment() {
 
         coursesRecycler.layoutManager = LinearLayoutManager(this.context, LinearLayoutManager.HORIZONTAL, false)
 
-    viewLifecycleOwner.lifecycleScope.launch{
-        if(userHasCourses()){
-            addRecyclerViewElements(coursesRecycler)
-            progressBar.visibility = View.GONE
-//            addTestElements(coursesRecycler)
-            coursesRecycler.visibility = View.VISIBLE
-//            addRecyclerVIewScrollAnimation(coursesRecycler, constraintLayout)
-        }else{
-            progressBar.visibility = View.GONE
-            cardViewBottom.visibility = View.VISIBLE
-        }
-    }
-
-    }
-
-
-
-    private fun addTestElements(coursesRecycler: RecyclerView) {
-
-        val data = ArrayList<ItemsViewModel2>()
-//        data.add(ItemsViewModel(R.drawable.web_development_course, "Learn Web Development"))
-//        data.add(ItemsViewModel(R.drawable.python_course, "Learn Python"))
-//        data.add(ItemsViewModel(R.drawable.data_science_course, "Data Science"))
-//        data.add(ItemsViewModel(R.drawable.creative_writing_course, "Creative Writing"))
-//        data.add(ItemsViewModel(R.drawable.time_management_course, "Time Management"))
-
-        val adapter = CustomAdapter2(data)
-//
-        coursesRecycler.adapter = adapter
-
+        userHasCourses()
     }
 
     private fun addRecyclerViewElements(coursesRecycler: RecyclerView) {
-        val db = Firebase.firestore
+
+        cardViewBottom = view!!.findViewById(R.id.cardView2)
+        progressBar = view!!.findViewById(R.id.progressBar)
+
+        val db = Firebase.database
         val data = ArrayList<ItemsViewModel2>()
         var user = FirebaseAuth.getInstance().currentUser
-        var email = user?.email.toString()
-        db.collection("users")
-            .document(email)
-            .get()
-            .addOnSuccessListener { courses->
+        var email = user?.email.toString().dropLast(4)
+        val myRef = db.getReference("users/"+email+"/courses_enrolled")
+        myRef.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                val num_courses = dataSnapshot.childrenCount
+                Log.w(ContentValues.TAG, "Adding "+num_courses.toString()+" number of courses.")
+                dataSnapshot.children.forEach() {
+                    val name = it.key.toString()
+                    val image =
+                        dataSnapshot.child(name+"/image").getValue(String::class.java)
 
-               var map: Map<String, Map<String, String>> = courses.data?.get("courses_enrolled") as Map<String, Map<String, String>>
-                Log.d("TAG", "value of courses enrolled is ${courses.data?.get("courses_enrolled")}")
+                    val url = image
 
-                for ((key, value) in map) {
-                    println("$key")
-                    for((key2, value2) in value){
-                        println("$key2 = $value2")
-                        if(key2.toString()=="image"){
-                            data.add(ItemsViewModel2(value2.toString(), key.toString()))
-                        }
-                    }
+                    data.add(ItemsViewModel2(image.toString(), name.toString()))
+                    Log.w(ContentValues.TAG, "Added "+name.toString()+" element")
                 }
-                val adapter = CustomAdapter2(data)
-//
-                coursesRecycler.adapter = adapter
-
-
+                coursesRecycler.visibility = View.VISIBLE
+                progressBar.visibility = View.GONE
             }
+
+            override fun onCancelled(error: DatabaseError) {
+                Log.w(ContentValues.TAG, "Failed to read value.", error.toException())
+            }
+
+        })
+                val adapter = CustomAdapter2(data)
+                coursesRecycler.adapter = adapter
 
     }
 
-    private suspend fun userHasCourses(): Boolean {
-        val db = Firebase.firestore
-        var existence: Boolean = false
-        val user = FirebaseAuth.getInstance().currentUser
-        var email = user?.email.toString()
-        db.collection("users")
-            .document(email)
-            .get()
-            .addOnSuccessListener { courses->
+    private fun userHasCourses() {
 
-                if(courses.data?.get("courses_enrolled")!=""){
-                    existence = true
+        coursesRecycler = view!!.findViewById(R.id.learnRecycler)
+        cardViewBottom = view!!.findViewById(R.id.cardView2)
+        progressBar = view!!.findViewById(R.id.progressBar)
+        progressBar.visibility = View.VISIBLE
+
+        val db = Firebase.database
+
+//        var existence: Boolean = false
+        val user = FirebaseAuth.getInstance().currentUser
+        var email = user?.email.toString().dropLast(4)
+        val myRef = db.getReference("users/"+email+"/courses_enrolled")
+        GlobalScope.async { myRef.addValueEventListener(object: ValueEventListener {
+
+            override fun onDataChange(snapshot: DataSnapshot) {
+                // This method is called once with the initial value and again
+                // whenever data at this location is updated.
+                val value = snapshot.childrenCount
+                Log.d(TAG, "Value is: " + value)
+                if(value>0){
+//                    existence = true
+                    Log.d("TAG", "Calling addelements function")
+                    addRecyclerViewElements(coursesRecycler)
+
+
                 }
                 else{
-                    existence = false
+                    progressBar.visibility = View.GONE
+                    cardViewBottom.visibility = View.VISIBLE
                 }
-//                existence = courses.data?.get("courses_enrolled").toString()!=""
-                Log.d("TAG", "value of courses is ${courses.data?.get("courses_enrolled")}")
-                Log.d("TAG", "EXISTENCE 1 VALUE is "+existence.toString())
-            }.await()
-        Log.d("TAG", "EXISTENCE 2 VALUE is "+existence.toString())
-        return existence
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Log.w(TAG, "Failed to read value.", error.toException())
+            }
+
+        })
+        }
+
     }
 
     override fun onCreateView(
