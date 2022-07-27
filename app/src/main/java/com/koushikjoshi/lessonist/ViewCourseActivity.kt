@@ -1,7 +1,9 @@
 package com.koushikjoshi.lessonist
 
+import android.content.ContentValues
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.ProgressBar
@@ -62,7 +64,7 @@ class ViewCourseActivity : AppCompatActivity() {
             }
 
             override fun onCancelled(error: DatabaseError) {
-                TODO("Not yet implemented")
+                Log.w(ContentValues.TAG, "Failed to read value.", error.toException())
             }
 
         })
