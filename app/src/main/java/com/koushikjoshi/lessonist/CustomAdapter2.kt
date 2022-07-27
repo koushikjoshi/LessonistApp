@@ -1,12 +1,18 @@
 package com.koushikjoshi.lessonist
 
+import android.content.ClipData
+import android.content.Context
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
+import kotlin.coroutines.coroutineContext
 
 
 interface ClickListener {
@@ -41,7 +47,16 @@ class CustomAdapter2(private val mList: List<ItemsViewModel2>) : RecyclerView.Ad
         // sets the text to the textview from our itemHolder class
         holder.textView.text = ItemsViewModel.text
 
+        holder.courseButton.setOnClickListener {
+            val intent = Intent(holder.itemView.context, ViewCourseActivity::class.java)
+            intent.putExtra("url", ItemsViewModel.url.toString())
+            intent.putExtra("courseName", ItemsViewModel.text.toString())
+            holder.itemView.context.startActivity(intent)
+        }
+
     }
+
+
 
     // return the number of the items in the list
     override fun getItemCount(): Int {
@@ -52,5 +67,6 @@ class CustomAdapter2(private val mList: List<ItemsViewModel2>) : RecyclerView.Ad
     class ViewHolder(ItemView: View) : RecyclerView.ViewHolder(ItemView) {
         val imageView: ImageView = itemView.findViewById(R.id.imageView2)
         val textView: TextView = itemView.findViewById(R.id.textView2)
+        val courseButton: Button = itemView.findViewById(R.id.button)
     }
 }

@@ -6,23 +6,14 @@
     android:layout_height="match_parent"
     tools:context=".ViewCourseActivity">
 
-    <ImageView
-        android:id="@+id/imageView3"
-        android:layout_width="15dp"
-        android:layout_height="30dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="20dp"
-        android:scaleType="fitXY"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/backbutton" />
-
     <TextView
         android:id="@+id/courseNameText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
         android:layout_marginTop="20dp"
-        android:fontFamily="@font/interbold"
+        android:layout_marginEnd="10dp"
+        android:fontFamily="@font/intermedium"
         android:text="Course Name"
         android:textColor="#000000"
         android:textSize="24sp"
@@ -53,6 +44,7 @@
         app:layout_constraintTop_toBottomOf="@+id/courseNameText" />
 
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/videosRecycler"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="80dp"
@@ -60,4 +52,15 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/courseNameText" />
+
+    <ProgressBar
+        android:id="@+id/progressBar4"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

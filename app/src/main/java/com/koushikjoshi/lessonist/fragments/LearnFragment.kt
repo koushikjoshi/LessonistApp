@@ -110,9 +110,9 @@ class LearnFragment : Fragment() {
                     val image =
                         dataSnapshot.child(name+"/image").getValue(String::class.java)
 
-                    val url = image
+                    val url = dataSnapshot.child(name+"/url").getValue(String::class.java)
 
-                    data.add(ItemsViewModel2(image.toString(), name.toString()))
+                    data.add(ItemsViewModel2(image.toString(), name.toString(), url.toString()))
                     Log.w(ContentValues.TAG, "Added "+name.toString()+" element")
                 }
                 coursesRecycler.visibility = View.VISIBLE

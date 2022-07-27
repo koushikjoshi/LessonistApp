@@ -76,9 +76,9 @@ class ExploreFragment : Fragment() {
                     val image =
                         dataSnapshot.child("course$i/image").getValue(String::class.java)
 
-                    val url = image
+                    val url = dataSnapshot.child("course$i/url").getValue(String::class.java)
 
-                    data.add(ItemsViewModel2(image.toString(), name.toString()))
+                    data.add(ItemsViewModel2(image.toString(), name.toString(), url.toString()))
                     Log.w(ContentValues.TAG, "Added "+i.toString()+" element")
 
                     progressBar2.visibility = View.GONE
