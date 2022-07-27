@@ -74,10 +74,6 @@ class LearnFragment : Fragment() {
         constraintLayout = view.findViewById(R.id.parent_layout)
         nameText = view.findViewById(R.id.textView)
 
-
-
-
-
         val user = FirebaseAuth.getInstance().currentUser
 
         var name = user?.displayName
@@ -154,15 +150,13 @@ class LearnFragment : Fragment() {
                 val value = snapshot.childrenCount
                 Log.d(TAG, "Value is: " + value)
                 if(value>0){
-//                    existence = true
                     Log.d("TAG", "Calling addelements function")
                     addRecyclerViewElements(coursesRecycler)
-
-
                 }
                 else{
                     progressBar.visibility = View.GONE
                     cardViewBottom.visibility = View.VISIBLE
+
                 }
             }
 
@@ -172,7 +166,6 @@ class LearnFragment : Fragment() {
 
         })
         }
-
     }
 
     override fun onCreateView(

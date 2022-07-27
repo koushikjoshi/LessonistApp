@@ -61,8 +61,6 @@ class ExploreFragment : Fragment() {
         searchBar.gravity = Gravity.CENTER
 
         addCoursesToList(allCoursesRecycler)
-
-
     }
 
     private fun addCoursesToList(allCoursesRecycler: RecyclerView) {
@@ -95,7 +93,6 @@ class ExploreFragment : Fragment() {
         })
 
         val adapter = CustomAdapter2(data)
-//
         allCoursesRecycler.adapter = adapter
     }
 

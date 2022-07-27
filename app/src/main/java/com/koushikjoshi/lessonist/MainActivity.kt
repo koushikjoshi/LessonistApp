@@ -1,5 +1,6 @@
 package com.koushikjoshi.lessonist
 
+import android.content.ContentValues
 import android.content.ContentValues.TAG
 import android.content.Intent
 import android.os.Bundle
@@ -20,6 +21,10 @@ import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.ktx.database
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -107,14 +112,7 @@ class MainActivity : AppCompatActivity() {
         try {
             val account: GoogleSignInAccount? = completedTask.getResult(ApiException::class.java)
             if (account != null) {
-                if(userExists(account.email)){
-                    UpdateUI(account)
-                }
-                else{
-                    addUserToDatabase(account)
-                    UpdateUI(account)
-                }
-
+                userExists(account)
             }
         } catch (e: ApiException) {
             Toast.makeText(this, e.toString(), Toast.LENGTH_SHORT).show()
@@ -122,62 +120,53 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun addUserToDatabase(account: GoogleSignInAccount) {
-        val db = Firebase.firestore
+        val db = Firebase.database
+        val myRef = db.getReference("users")
+        val trueEmail = account.email.toString().dropLast(4)
 
-        val name = hashMapOf(
+        val name = mutableMapOf(
             "name" to account.displayName.toString()
         )
-        val details = hashMapOf(
-            "details" to name,
+        val map = mutableMapOf(
+            "courses_enrolled" to "",
             "courses_completed" to "",
-            "courses_enrolled" to ""
+            "details" to name
         )
-//        val courses_completed = hashMapOf(
-//            "courses_completed" to ""
-//        )
-//        val courses_enrolled = hashMapOf(
-//            "courses_enrolled" to ""
-//        )
-//        val array = arrayListOf(details, courses_completed, courses_enrolled)
-//        val finalMap = hashMapOf(
-//            account.email.toString() to array
-//        )
+        val data = mutableMapOf(
+            trueEmail to map
+        )
 
-        db.collection("users").document(account.email.toString()).set(details)
+        myRef.updateChildren(data as Map<String, Any>)
+
+        UpdateUI(account)
     }
 
-    private fun userExists(email: String?): Boolean {
+    private fun userExists(account: GoogleSignInAccount?) {
 
-        val db = Firebase.firestore
-
-        var existence: Boolean = false
-
-        var docRef = db.collection("users").document(email.toString())
-        docRef.get().addOnCompleteListener { task ->
-            if(task.isSuccessful){
-                val document = task.result
-                if(document!=null){
-                    if (document.exists()) {
-                        Log.d("TAG", "Document already exists.")
-                        existence = true
-
-                    } else {
-                        Log.d("TAG", "Document doesn't exist.")
-                        existence = false
+        val db = Firebase.database
+        val trueEmail = account?.email.toString().dropLast(4)
+        val myRef = db.getReference("users")
+        myRef.child(trueEmail).addValueEventListener(object : ValueEventListener{
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if(snapshot.exists()){
+                    if (account != null) {
+                        UpdateUI(account)
                     }
                 }
-                else {
-                    Log.d("TAG", "Error: ", task.exception)
+                else{
+                    if (account != null) {
+                        addUserToDatabase(account)
+                    }
                 }
-
             }
-        }
-        return existence
+            override fun onCancelled(error: DatabaseError) {
+                Log.w(ContentValues.TAG, "Failed to read value.", error.toException())
+            }
+
+        })
     }
 
     private fun UpdateUI(account: GoogleSignInAccount) {
-
-
 
         val credential = GoogleAuthProvider.getCredential(account.idToken, null)
         firebaseAuth.signInWithCredential(credential).addOnCompleteListener { task ->
@@ -190,23 +179,5 @@ class MainActivity : AppCompatActivity() {
                 finish()
             }
         }
-    }
-
-        private fun createAccount() {
-
-//        Add empty database collections for completed courses and enrolled courses
-
-
-    }
-
-    private fun openNextScreen() {
-        val intent: Intent = Intent(this, HomeActivity::class.java)
-        startActivity(intent)
-    }
-
-    private fun accountExists(email: String?): Boolean {
-        val db = FirebaseFirestore.getInstance()
-
-        return true
     }
 }

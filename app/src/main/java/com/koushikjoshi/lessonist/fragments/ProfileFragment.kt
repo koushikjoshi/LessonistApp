@@ -66,7 +66,6 @@ class ProfileFragment : Fragment() {
             startActivity(intent)
             requireActivity().finish()
         }
-
     }
 
     override fun onCreateView(
