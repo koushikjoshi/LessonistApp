@@ -3,7 +3,6 @@ package com.koushikjoshi.lessonist.fragments
 import android.content.ContentValues
 import android.content.ContentValues.TAG
 import android.os.Bundle
-import android.provider.Settings
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -14,7 +13,6 @@ import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
@@ -22,14 +20,10 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
-import com.google.firebase.database.ktx.getValue
-import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.koushikjoshi.lessonist.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await
 
 
 // TODO: Rename parameter arguments, choose names that match
@@ -86,16 +80,19 @@ class LearnFragment : Fragment() {
         coursesRecycler.visibility = View.GONE
         cardViewBottom.visibility = View.GONE
 
+        cardViewBottom = view.findViewById(R.id.cardView2)
+        progressBar = view.findViewById(R.id.progressBar)
+
         coursesRecycler.layoutManager = LinearLayoutManager(this.context, LinearLayoutManager.HORIZONTAL, false)
 
-        userHasCourses()
+        userHasCourses(cardViewBottom, progressBar, coursesRecycler)
     }
 
-    private fun addRecyclerViewElements(coursesRecycler: RecyclerView) {
-
-        cardViewBottom = view!!.findViewById(R.id.cardView2)
-        progressBar = view!!.findViewById(R.id.progressBar)
-
+    private fun addRecyclerViewElements(
+        coursesRecycler: RecyclerView,
+        cardViewBottom: CardView,
+        progressBar: ProgressBar
+    ) {
         val db = Firebase.database
         val data = ArrayList<ItemsViewModel2>()
         var user = FirebaseAuth.getInstance().currentUser
@@ -116,7 +113,7 @@ class LearnFragment : Fragment() {
                     Log.w(ContentValues.TAG, "Added "+name.toString()+" element")
                 }
                 coursesRecycler.visibility = View.VISIBLE
-                progressBar.visibility = View.GONE
+                this@LearnFragment.progressBar.visibility = View.GONE
             }
 
             override fun onCancelled(error: DatabaseError) {
@@ -129,11 +126,11 @@ class LearnFragment : Fragment() {
 
     }
 
-    private fun userHasCourses() {
-
-        coursesRecycler = view!!.findViewById(R.id.learnRecycler)
-        cardViewBottom = view!!.findViewById(R.id.cardView2)
-        progressBar = view!!.findViewById(R.id.progressBar)
+    private fun userHasCourses(
+        cardViewBottom: CardView,
+        progressBar: ProgressBar,
+        coursesRecycler: RecyclerView,
+    ) {
         progressBar.visibility = View.VISIBLE
 
         val db = Firebase.database
@@ -151,12 +148,11 @@ class LearnFragment : Fragment() {
                 Log.d(TAG, "Value is: " + value)
                 if(value>0){
                     Log.d("TAG", "Calling addelements function")
-                    addRecyclerViewElements(coursesRecycler)
+                    addRecyclerViewElements(coursesRecycler, cardViewBottom, progressBar)
                 }
                 else{
                     progressBar.visibility = View.GONE
                     cardViewBottom.visibility = View.VISIBLE
-
                 }
             }
 

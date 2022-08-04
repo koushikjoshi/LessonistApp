@@ -1,5 +1,6 @@
 package com.koushikjoshi.lessonist
 
+import android.app.Activity
 import android.content.ClipData
 import android.content.Context
 import android.content.Intent
@@ -12,7 +13,10 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import kotlin.coroutines.coroutineContext
+import kotlinx.coroutines.delay as delay1
 
 
 interface ClickListener {
@@ -52,6 +56,7 @@ class CustomAdapter2(private val mList: List<ItemsViewModel2>) : RecyclerView.Ad
             intent.putExtra("url", ItemsViewModel.url.toString())
             intent.putExtra("courseName", ItemsViewModel.text.toString())
             holder.itemView.context.startActivity(intent)
+            var act = holder.itemView.context as Activity
         }
 
     }
