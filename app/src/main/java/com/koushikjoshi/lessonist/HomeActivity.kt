@@ -41,6 +41,8 @@ class HomeActivity : AppCompatActivity() {
 
     }
 
+
+// Implement press back twice to exit
     override fun onBackPressed() {
         if (doubleBackToExitPressedOnce) {
             super.onBackPressed()
