@@ -12,6 +12,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Lessonist">
         <activity
+            android:name=".CertificateGenActivity"
+            android:exported="false" />
+        <activity
             android:name=".MyCoursesActivity"
             android:exported="false" />
         <activity
