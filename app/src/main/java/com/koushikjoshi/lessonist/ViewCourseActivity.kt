@@ -9,6 +9,7 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
@@ -41,6 +42,8 @@ class ViewCourseActivity : AppCompatActivity() {
         enrollButton.visibility = View.GONE
         videosRecyclerView.visibility = View.GONE
 
+        videosRecyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+
         var url = intent.extras?.get("url")
         var courseName = intent.extras?.get("courseName")
 
@@ -50,17 +53,10 @@ class ViewCourseActivity : AppCompatActivity() {
 //        check if user has already enrolled in the course
         GlobalScope.launch {
            async {
-               courseExists(email, courseName, url, enrollButton, progressBar)
+               courseExists(email, courseName, url, enrollButton, progressBar, videosRecyclerView)
            }.await()
-            async{
-                addVideos(progressBar, url.toString())
-            }.await()
 
         }
-
-
-
-
         enrollButton.setOnClickListener {
             enrollButton.isClickable = false
             GlobalScope.launch {
@@ -82,26 +78,34 @@ class ViewCourseActivity : AppCompatActivity() {
         courseName: Any?,
         url: Any?,
         enrollButton: Button,
-        progressBar: ProgressBar
+        progressBar: ProgressBar,
+        videosRecyclerView: RecyclerView
     ) {
         var db = Firebase.database
         var myRef = db.getReference("users/" + email)
         myRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 if (snapshot.child("courses_enrolled/" + courseName).exists()) {
-                    this@ViewCourseActivity.enrollButton.visibility = View.GONE
+                    var num_watched = Math.toIntExact(snapshot.child("courses_enrolled/"+courseName+"/num_watched").value as Long)
+                    enrollButton.visibility = View.GONE
+                    addVideos(progressBar, url.toString(), courseName, email, videosRecyclerView, num_watched)
                 } else if (snapshot.child("courses_completed/" + courseName).exists()) {
-                    this@ViewCourseActivity.enrollButton.visibility = View.GONE
+                    var num_watched = Math.toIntExact(snapshot.child("courses_completed/"+courseName+"/num_watched").value as Long)
+                    enrollButton.visibility = View.GONE
+                    addVideos(progressBar, url.toString(), courseName, email, videosRecyclerView, num_watched)
                 } else {
-                    this@ViewCourseActivity.enrollButton.visibility = View.VISIBLE
+                    var num_watched = 0
+                    enrollButton.visibility = View.VISIBLE
+                    addVideos(progressBar, url.toString(), courseName, email, videosRecyclerView, num_watched)
                 }
+
+
 
             }
 
             override fun onCancelled(error: DatabaseError) {
                 Log.w(ContentValues.TAG, "Failed to read value.", error.toException())
             }
-
         })
     }
 
@@ -110,13 +114,16 @@ class ViewCourseActivity : AppCompatActivity() {
         var db = Firebase.database
         var userRef = db.getReference("users/"+email+"/courses_enrolled")
         var courseRef = db.getReference("courses")
-        courseRef.addValueEventListener(object : ValueEventListener{
-            override fun onDataChange(snapshot: DataSnapshot) {
+        courseRef.addValueEventListener(object : ValueEventListener
+        {
+            override fun onDataChange(snapshot: DataSnapshot)
+            {
                 var courseNum = snapshot.childrenCount
-                for (i in 1..courseNum) {
+                for (i in 1..courseNum)
+                {
                     if (snapshot.child("course$i/name")
-                            .getValue(String::class.java) == courseName
-                    ) {
+                            .getValue(String::class.java) == courseName)
+                    {
                         var image = snapshot.child("course$i/image").getValue(String::class.java)
                         var num_videos =
                             snapshot.child("course$i/num_videos").getValue(Int::class.java)
@@ -143,15 +150,67 @@ class ViewCourseActivity : AppCompatActivity() {
             override fun onCancelled(error: DatabaseError) {
                 Log.w(ContentValues.TAG, "Failed to read value.", error.toException())
             }
-
         })
     }
+    private fun addVideos(
+        progressBar: ProgressBar,
+        url: String,
+        courseName: Any?,
+        email: String,
+        videosRecyclerView: RecyclerView,
+        num_watched: Int
+    ) {
 
-    private fun addVideos(progressBar: ProgressBar, url: String) {
+        var db = Firebase.database
+        val data = ArrayList<ItemsViewModel3>()
+        var userRef = db.getReference("users/"+email+"/courses_enrolled")
+        var courseRef = db.getReference("courses")
+
+        courseRef.addValueEventListener(object: ValueEventListener
+        {
+            override fun onDataChange(snapshot: DataSnapshot)
+            {
+                var num_children = snapshot.childrenCount
+                snapshot.children.forEach()
+                {
+
+                    if(it.child("name").value.toString() == courseName.toString()){
+
+                        var num_vids: Int = Math.toIntExact(it.child("num_videos").value as Long)
+                        var i = 1
+
+                        it.child("videos").children.forEach()
+                        {
+
+                            var slno = i
+                            var image = R.drawable.ic_baseline_panorama_fish_eye_24
+                            if(i<=num_watched){
+                                image = R.drawable.ic_baseline_check_circle_outline_24
+                            }
+
+                            var title = it.child("title").value.toString()
+                            var url = it.child("url").value.toString()
+                            i++
+
+                            var titleFinal = title.toString().substring(0, Math.min(title.length, 30))+"..."
+
+                            data.add(ItemsViewModel3(image, title.toString(), slno.toString(), url.toString(), courseName.toString(), email.toString()))
+                        }
+                    }
+                }
 
 
+                progressBar.visibility = View.GONE
+                videosRecyclerView.visibility = View.VISIBLE
 
-        progressBar.visibility = View.GONE
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Log.w(ContentValues.TAG, "Failed to read value.", error.toException())
+            }
+        })
+        val adapter = CustomAdapter3(data)
+        videosRecyclerView.adapter = adapter
 
     }
 

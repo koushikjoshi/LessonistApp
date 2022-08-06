@@ -13,6 +13,7 @@
         <entry key="..\:/Projects/Lessonist2/app/src/main/res/drawable/card_button_bg_2.xml" value="0.247" />
         <entry key="..\:/Projects/Lessonist2/app/src/main/res/drawable/card_press_selector.xml" value="0.247" />
         <entry key="..\:/Projects/Lessonist2/app/src/main/res/drawable/center_search.xml" value="0.247" />
+        <entry key="..\:/Projects/Lessonist2/app/src/main/res/drawable/ic_baseline_check_circle_outline_24.xml" value="0.2465" />
         <entry key="..\:/Projects/Lessonist2/app/src/main/res/drawable/ic_baseline_learn_24.xml" value="0.2635" />
         <entry key="..\:/Projects/Lessonist2/app/src/main/res/drawable/ic_baseline_person_pink_24.xml" value="0.247" />
         <entry key="..\:/Projects/Lessonist2/app/src/main/res/drawable/learn_pink_bg.xml" value="0.2635" />
@@ -22,6 +23,7 @@
         <entry key="..\:/Projects/Lessonist2/app/src/main/res/drawable/selected_bg.xml" value="0.2635" />
         <entry key="..\:/Projects/Lessonist2/app/src/main/res/layout/activity_home.xml" value="0.27447916666666666" />
         <entry key="..\:/Projects/Lessonist2/app/src/main/res/layout/activity_main.xml" value="0.264" />
+        <entry key="..\:/Projects/Lessonist2/app/src/main/res/layout/activity_my_certificates.xml" value="0.264" />
         <entry key="..\:/Projects/Lessonist2/app/src/main/res/layout/activity_view_course.xml" value="0.264" />
         <entry key="..\:/Projects/Lessonist2/app/src/main/res/layout/course_card_outline.xml" value="0.264" />
         <entry key="..\:/Projects/Lessonist2/app/src/main/res/layout/fragment_explore.xml" value="0.264" />
