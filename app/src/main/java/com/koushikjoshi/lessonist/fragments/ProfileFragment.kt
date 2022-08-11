@@ -80,6 +80,7 @@ class ProfileFragment : Fragment() {
 
         coursesButton.setOnClickListener {
             val intent: Intent = Intent(view.context, MyCoursesActivity::class.java)
+            startActivity(intent)
         }
 
     }

@@ -25,7 +25,7 @@ interface ClickListener {
 }
 
 
-class CustomAdapter2(private val mList: List<ItemsViewModel2>) : RecyclerView.Adapter<CustomAdapter2.ViewHolder>() {
+class CustomAdapter2(private var mList: List<ItemsViewModel2>) : RecyclerView.Adapter<CustomAdapter2.ViewHolder>() {
 
     // create new views
 
@@ -66,6 +66,13 @@ class CustomAdapter2(private val mList: List<ItemsViewModel2>) : RecyclerView.Ad
     // return the number of the items in the list
     override fun getItemCount(): Int {
         return mList.size
+    }
+
+    public fun filterList(filteredList: ArrayList<ItemsViewModel2>){
+
+        mList = filteredList;
+        notifyDataSetChanged()
+
     }
 
     // Holds the views for adding it to image and text

@@ -2,6 +2,8 @@ package com.koushikjoshi.lessonist.fragments
 
 import android.content.ContentValues
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -33,6 +35,9 @@ class ExploreFragment : Fragment() {
 
     lateinit var allCoursesRecycler: RecyclerView
     lateinit var progressBar2: ProgressBar
+    lateinit var searchBar: EditText
+    lateinit var data: ArrayList<ItemsViewModel2>
+    lateinit var adapter: CustomAdapter2
 
     // TODO: Rename and change types of parameters
     private var param1: String? = null
@@ -50,7 +55,7 @@ class ExploreFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        var searchBar: EditText = view.findViewById(R.id.searchCourses)
+        searchBar = view.findViewById(R.id.searchCourses)
         allCoursesRecycler = view.findViewById(R.id.allCoursesRecycler)
         progressBar2 = view.findViewById(R.id.progressBar2)
 
@@ -61,12 +66,44 @@ class ExploreFragment : Fragment() {
         searchBar.gravity = Gravity.CENTER
 
         addCoursesToList(allCoursesRecycler)
+
+        searchBar.addTextChangedListener(object: TextWatcher{
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+
+            }
+
+            override fun afterTextChanged(s: Editable?) {
+                filter(s.toString(), allCoursesRecycler)
+            }
+
+        })
+    }
+
+    private fun filter(text: String, allCoursesRecycler: RecyclerView){
+        val array = ArrayList<ItemsViewModel2>()
+
+        for(item: ItemsViewModel2 in data){
+            if(item.text.lowercase().contains(text.lowercase())){
+                array.add(item)
+            }
+        }
+
+        adapter = CustomAdapter2(array)
+
+        adapter.filterList(array)
+
+        allCoursesRecycler.adapter = adapter
+
     }
 
     private fun addCoursesToList(allCoursesRecycler: RecyclerView) {
         val database = FirebaseDatabase.getInstance()
         val myRef = database.getReference("/courses")
-        val data = ArrayList<ItemsViewModel2>()
+        data = ArrayList<ItemsViewModel2>()
         myRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 val num_courses = dataSnapshot.childrenCount
@@ -84,6 +121,8 @@ class ExploreFragment : Fragment() {
                     progressBar2.visibility = View.GONE
                     allCoursesRecycler.visibility = View.VISIBLE
                 }
+                adapter = CustomAdapter2(data)
+                allCoursesRecycler.adapter = adapter
             }
 
             override fun onCancelled(error: DatabaseError) {
@@ -92,8 +131,7 @@ class ExploreFragment : Fragment() {
 
         })
 
-        val adapter = CustomAdapter2(data)
-        allCoursesRecycler.adapter = adapter
+
     }
 
     override fun onCreateView(

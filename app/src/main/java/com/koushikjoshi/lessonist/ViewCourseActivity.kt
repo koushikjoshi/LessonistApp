@@ -109,7 +109,11 @@ class ViewCourseActivity : AppCompatActivity() {
         })
     }
 
-    private suspend fun buttonStuff(email: String, courseName: Any?, enrollButton: Button) {
+    private suspend fun buttonStuff(
+        email: String,
+        courseName: Any?,
+        enrollButton: Button
+    ) {
         enrollButton.isClickable = false
         var db = Firebase.database
         var userRef = db.getReference("users/"+email+"/courses_enrolled")
@@ -142,6 +146,8 @@ class ViewCourseActivity : AppCompatActivity() {
 
                         userRef.updateChildren(data as Map<String, Any>)
                         enrollButton.visibility = View.GONE
+//                        videosTracker.visibility = View.VISIBLE
+
                     }
                 }
             }

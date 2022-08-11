@@ -45,10 +45,12 @@ class LearnFragment : Fragment() {
     lateinit var progressBar: ProgressBar
     lateinit var cardViewTop: CardView
     lateinit var cardViewBottom: CardView
-    lateinit var hoursText: TextView
+    lateinit var quoteText: TextView
+    lateinit var byText: TextView
     lateinit var constraintLayout: ConstraintLayout
     lateinit var nameText: TextView
-    lateinit var coursesViewButton: Button
+    lateinit var progressBarTop: ProgressBar
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,8 +67,14 @@ class LearnFragment : Fragment() {
         coursesRecycler = view.findViewById(R.id.learnRecycler)
         cardViewBottom = view.findViewById(R.id.cardView2)
         progressBar = view.findViewById(R.id.progressBar)
+        progressBarTop = view.findViewById(R.id.progressBar6)
         constraintLayout = view.findViewById(R.id.parent_layout)
         nameText = view.findViewById(R.id.textView)
+        quoteText = view.findViewById(R.id.quoteText)
+        byText = view.findViewById(R.id.byText)
+        cardViewTop = view.findViewById(R.id.cardView)
+
+        cardViewTop.visibility = View.INVISIBLE
 
         val user = FirebaseAuth.getInstance().currentUser
 
@@ -86,6 +94,38 @@ class LearnFragment : Fragment() {
         coursesRecycler.layoutManager = LinearLayoutManager(this.context, LinearLayoutManager.HORIZONTAL, false)
 
         userHasCourses(cardViewBottom, progressBar, coursesRecycler)
+
+        setCardViewTopData(cardViewTop, progressBarTop, quoteText, byText)
+
+    }
+
+    private fun setCardViewTopData(cardViewTop: CardView?, progressBarTop: ProgressBar?, quoteText: TextView?, byText: TextView?) {
+
+        var db = Firebase.database
+        var ref = db.getReference("quotes")
+
+        ref.addListenerForSingleValueEvent(object: ValueEventListener{
+            override fun onDataChange(snapshot: DataSnapshot) {
+                var num_quotes = snapshot.childrenCount
+                var rand = (1..num_quotes).random()
+
+                var quote = snapshot.child("quote$rand").child("quote").value.toString()
+                var by = snapshot.child("quote$rand").child("by").value.toString()
+
+                quoteText?.setText(quote)
+                byText?.setText("-"+by)
+
+                cardViewTop?.visibility = View.VISIBLE
+                progressBarTop?.visibility = View.GONE
+
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+
+            }
+
+        })
+
     }
 
     private fun addRecyclerViewElements(

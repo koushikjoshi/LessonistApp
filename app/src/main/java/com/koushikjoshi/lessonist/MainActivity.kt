@@ -28,6 +28,8 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
 
 
 class MainActivity : AppCompatActivity() {
@@ -120,23 +122,24 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun addUserToDatabase(account: GoogleSignInAccount) {
-        val db = Firebase.database
-        val myRef = db.getReference("users")
-        val trueEmail = account.email.toString().dropLast(4)
 
-        val name = mutableMapOf(
-            "name" to account.displayName.toString()
-        )
-        val map = mutableMapOf(
-            "courses_enrolled" to "",
-            "courses_completed" to "",
-            "details" to name
-        )
-        val data = mutableMapOf(
-            trueEmail to map
-        )
+            val db = Firebase.database
+            val myRef = db.getReference("users")
+            val trueEmail = account.email.toString().dropLast(4)
 
-        myRef.updateChildren(data as Map<String, Any>)
+            val name = mutableMapOf(
+                "name" to account.displayName.toString()
+            )
+            val map = mutableMapOf(
+                "courses_enrolled" to "",
+                "courses_completed" to "",
+                "details" to name
+            )
+            val data = mutableMapOf(
+                trueEmail to map
+            )
+
+            myRef.updateChildren(data as Map<String, Any>)
 
         UpdateUI(account)
     }
