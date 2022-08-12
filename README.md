@@ -48,3 +48,5 @@ UI Layouts and elements - XML
  </table>
 
 # Download the APK:
+
+You can downlaod the apk [here](https://drive.google.com/file/d/1TKRoEhDfLUR5neGwvOFMfh5oyoipG71r/view?usp=sharing)
