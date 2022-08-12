@@ -25,6 +25,11 @@ YouTube is a great free resource to learn, with many high-quality courses for va
 ### More screenshots
 
 <table>
+<tr>
+    <td>"Profile" Page</td>
+     <td>"My Certificates" page</td>
+     <td>Final certificate</td>
+  </tr>
   <tr>
     <td><img src="https://github.com/koushikjoshi/LessonistApp/blob/master/resources/img4.jpg" width=270 height=480></td>
     <td><img src="https://github.com/koushikjoshi/LessonistApp/blob/master/resources/img5.jpg" width=270 height=480></td>
