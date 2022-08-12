@@ -5,7 +5,7 @@ Code for Lessonist - An app that lets you get certified for completing curated c
 YouTube is a great free resource to learn, with many high-quality courses for various topics; but the completion of those courses does not result in any form of acknowledgement or a certification. With Lessonist, you can now get certified for completing a well-curated course consisting of YouTube videos.
 
 ## Demo video
-![alt text](https://github.com/koushikjoshi/LessonistApp/blob/master/resources/demovideo.mp4)
+![demo gif](https://github.com/koushikjoshi/LessonistApp/blob/master/resources/demo.gif)
 
 ## Screenshots
 
