@@ -5,9 +5,9 @@ Code for Lessonist - An app that lets you get certified for completing curated c
 YouTube is a great free resource to learn, with many high-quality courses for various topics; but the completion of those courses does not result in any form of acknowledgement or a certification. With Lessonist, you can now get certified for completing a well-curated course consisting of YouTube videos.
 
 # Technology used
-App logic - Kotlin
-Backend - Firebase
-Scripting - Python
+- App logic - Kotlin
+- Backend - Firebase
+- Scripting - Python
 UI Layouts and elements - XML
 ### Libraries used:
 - Picaso
@@ -50,3 +50,7 @@ UI Layouts and elements - XML
 # Download the APK:
 
 You can downlaod the apk [here](https://drive.google.com/file/d/1TKRoEhDfLUR5neGwvOFMfh5oyoipG71r/view?usp=sharing)
+
+### Author - Koushik Joshi
+- [Twitter](https://twitter.com/koushikjoshi)
+- [LinkedIn](https://www.linkedin.com/in/koushikjoshi/)
