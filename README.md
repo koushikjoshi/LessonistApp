@@ -15,7 +15,7 @@ UI Layouts and elements - XML
 - Kotlin Coroutines
 
 # Demo video
-![demo gif](https://github.com/koushikjoshi/LessonistApp/blob/master/resources/demo.gif)
+![demo gif](https://github.com/koushikjoshi/LessonistApp/blob/master/resources/demovideogif.gif)
 
 ## Screenshots
 
