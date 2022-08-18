@@ -8,7 +8,7 @@ YouTube is a great free resource to learn, with many high-quality courses for va
 - App logic - Kotlin
 - Backend - Firebase
 - Scripting - Python
-UI Layouts and elements - XML
+- UI Layouts and elements - XML
 ### Libraries used:
 - Picaso
 - Retrofit
